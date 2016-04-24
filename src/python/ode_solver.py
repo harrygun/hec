@@ -36,6 +36,7 @@ def ode_solver_general(derv, xi, yi, x, args=(), solver_type='scipy.integrate.od
 	raise Exception('sympy integrator NOT supported yet.')
 
     elif solver_type=='scipy.integrate.odeint':
-        return integ.odeint(lambda y, x, _args_: derv(p, x, y, other_args), yi, x, args=tuple([p]+list(other_args)), mxstep=_mx_step_)
+        #return integ.odeint(lambda y, x, _args_: derv(p, x, y, other_args), yi, x, args=tuple([p]+list(other_args)), mxstep=_mx_step_)
+        return integ.odeint(lambda y, x, _args_: derv(p, x, y, other_args), yi, x, args=args, mxstep=_mx_step_)
 
 
