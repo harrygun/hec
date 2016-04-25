@@ -137,7 +137,7 @@ def eigval_to_shape(l1, l2, l3):
 ''' ->> some testing routines <<- '''
 def elltraj_test(p, a):
 
-    F, ee, pp=2., 0., 0.
+    F, ee, pp=0.5, 0., 0.
     #F, ee, pp=1., 0., 0.
     l=shape_to_eigval(F, ee, pp)
     print 'testing lambda:', l
