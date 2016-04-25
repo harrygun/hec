@@ -80,9 +80,7 @@ def get_hec_trajs(p, dynvar, a, var_type):
 	for j in range(len(e_lst)):
 	    # ->> convert to eigenvalues first <<- #
             lamb=elc.shape_to_eigval(rho[i,j], ell[i,j], pro[i,j])
-
-            # ->> 
-	    _traj[j]=elc.get_elliptraj_one(p, a, lamb):
+	    _traj[j]=elc.get_elliptraj_one(p, a, lamb)
 
         traj.append(_traj)
 
@@ -141,6 +139,13 @@ if __name__=='__main__':
     '''->> calculate ellipsoidal collapse model <<-'''
     ai, af, na = 0.01, 1., 500
     a=np.linspace(ai, af, na)
+
+
+    _testing_=True
+    if _testing_==True:
+        elc.elltraj_test(p, a)
+        p.finalize()
+
 
 
     #->> dynvar:  list of rho and e, p <<- #

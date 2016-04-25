@@ -38,14 +38,15 @@ def bi(ai):
 
 
 
-def dynamic_elc(p, a, var):
+def dynamic_elc(p, a, var, other_args):
     ''' ->> ellipsoidal collapse dynamics to be solved <<- 
         p:    prog controller, include cosmological routines 
 	var:  ODE integrator variables 
     '''
     #l1, l2, l3, l1p, l2p, l3p=var
-    l = var[:3]
-    lp= var[3:]
+
+    li=np.array(other_args)
+    a_i, da_i = var[:3], var[3:]
 
     z=1./a-1.
     omz=p.pk.om0z(z)
@@ -55,48 +56,50 @@ def dynamic_elc(p, a, var):
 
 
     # ->> 
-    dnr=a**3./np.prod(l)-1.
-    bj=bi(l)
-    #l_ext=p.pk.D1(z)*np.([ ]) 
+    dnr=a**3./np.prod(a_i)-1.
+    bj=bi(a_i)
+    lambda_ext=p.pk.D1(z)*(li-np.sum(li)/3.)
 
 
-    #dyn_l=lambda idx: -mH**2*(olz+omz*l[idx]*(1./3.+dnr/3.+ dnr*bj[idx]/2.+l_ext[idx]))
-    dyn_l = lambda idx: (1.+qt)*lp[idx]+(olz-omz/2.)*l[idx]-3./2.*omz*\
-                        (bj[idx]*dnr[idx]/2.+l_ext[idx])*l[idx]  
+    dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*\
+                        (bj[idx]*dnr[idx]/2.+lambda_ext[idx])*a_i[idx]  
 
     # ->> derivative <<- #
-    l_p = lp
-    l_pp= [dyn_l(i) for i in range(3)]
+    ai_p = da_i
+    ai_pp= [dyn_ai(i) for i in range(3)]
 
-    return l_p+l_pp
-
-
+    return ai_p+ai_pp
 
 
 
 
-def get_elliptraj_one(p, a, lambda_i, R, ):
+
+
+def get_elliptraj_one(p, a, lambda_i):
     # ->> ODE solver for ONE given initial condition <<- #
-    # varl_0:   [lambda_i], so we also have to  d lambda_i/dlna 
-    # R:        initial Lagrangian size of the patch 
-    #
+    # lambda_i: initial eigenvalues evaluated at z=0, so initial value = D(t_i) lambda_i
+    # R:        initial Lagrangian size of the patch (NOT using)
 
     #->> set initial conditions <<- #
     #raise Exception('set IC for dot{a}.')
     a0=a[0] 
     z0=1./a0-1.
+    D0=p.pk.D1(z0)
+    f0=p.pk.f(z0)
 
-    a_i = [a0*   for i in range(3)]
-    da_i = [] 
-    
+    # ->> initial condition <<- #
+    a_i = [a0*(1.-D0*lambda_i[i]) for i in range(3)]
+    da_i = [ai[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
     varl_0=a_i+da_i
 
-
-    other_args=list(dynvar)
+    # ->> arguments <<- #
+    other_args=list(lambda_i)
     all_args=tuple([p]+other_args)
 
+    #->> return the result from ODE solver <<- #
+    return myode.ode_solver_general(dynamic_elc, a0, varl_0, a, args=all_args)
 
-    return myode.ode_solver(dynamic_elc, a0, varl_0, a, args=all_args )
+
 
 
 def shape_to_eigval(F, e, p):
@@ -109,13 +112,10 @@ def shape_to_eigval(F, e, p):
     return [l1, l2, l3]
 
 
+
 def eigval_to_shape(l1, l2, l3):
 
     return
-
-
-
-
 
 
 
@@ -154,10 +154,17 @@ def get_elliptraj(a, dynvar, var_type='nu_e_p'):
 ''' ->> some testing routines <<- '''
 def elltraj_test(p, a):
 
-    F, e, p=1., 0.5, 0.2
+    #F, e, p=1., 0.5, 0.2
+    F, e, p=3., 0., 0.
     l=shape_to_eigval(F, e, p)
+    print 'testing lambda:', l
 
+    traj=get_elliptraj_one(p, a, l)
+    print 'traj:', traj.shape
 
+    # ->> plot <<- #
+    #pl.plot( )    
+     
 
     return
 
