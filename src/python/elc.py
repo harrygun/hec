@@ -2,6 +2,7 @@ import scipy as sp
 import numpy as np
 import pynbody as pn
 import sympy.mpmath as mpmath
+import pylab as pl
 
 import genscript.progcontrol as pc
 from genscript.extendclass import *
@@ -26,10 +27,10 @@ def bi(ai):
     b=[]
     for i in range(3):
         idx=np.delete(idxall, i)
-        print 'calculating RD at', idx[0], idx[1], i
+        #print 'calculating RD at', idx[0], idx[1], i
 
         #b.append(2./3.*(mpmath.elliprd(ai[idx[0]], ai[idx[1]], ai[i])*np.prod(ai)-1.))
-        b.append(2./3.*mpmath.elliprd(ai[idx[0]]**2., ai[idx[1]]**2., ai[i]**2.)*np.prod(ai))
+        b.append(np.float(2./3.*mpmath.elliprd(ai[idx[0]]**2., ai[idx[1]]**2., ai[i]**2.)*np.prod(ai)))
 
     return b
 
@@ -44,6 +45,10 @@ def dynamic_elc(p, a, var, other_args):
 	var:  ODE integrator variables 
     '''
     #l1, l2, l3, l1p, l2p, l3p=var
+    #print 'inside dynamic_elc: ', var.shape, len(other_args), other_args
+
+    if len(var)!=6: 
+        raise Exception
 
     li=np.array(other_args)
     a_i, da_i = var[:3], var[3:]
@@ -54,15 +59,13 @@ def dynamic_elc(p, a, var, other_args):
     #mH=misc.mHz(p, z)
     qt=omz/2.-olz
 
-
     # ->> 
     dnr=a**3./np.prod(a_i)-1.
     bj=bi(a_i)
     lambda_ext=p.pk.D1(z)*(li-np.sum(li)/3.)
 
-
     dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*\
-                        (bj[idx]*dnr[idx]/2.+lambda_ext[idx])*a_i[idx]  
+                        (bj[idx]*dnr/2.+lambda_ext[idx])*a_i[idx]  
 
     # ->> derivative <<- #
     ai_p = da_i
@@ -89,7 +92,7 @@ def get_elliptraj_one(p, a, lambda_i):
 
     # ->> initial condition <<- #
     a_i = [a0*(1.-D0*lambda_i[i]) for i in range(3)]
-    da_i = [ai[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
+    da_i = [a_i[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
     varl_0=a_i+da_i
 
     # ->> arguments <<- #
@@ -114,8 +117,12 @@ def shape_to_eigval(F, e, p):
 
 
 def eigval_to_shape(l1, l2, l3):
+    #->> convert {l1, l2, l3} into {F, e, p} <<- #
+    F=l1+l2+l3 
+    e=(l1-l3)/2./F
+    p=(l1-2.*l2+l3)/2./F
 
-    return
+    return [F, e, p]
 
 
 
@@ -154,16 +161,22 @@ def get_elliptraj(a, dynvar, var_type='nu_e_p'):
 ''' ->> some testing routines <<- '''
 def elltraj_test(p, a):
 
-    #F, e, p=1., 0.5, 0.2
-    F, e, p=3., 0., 0.
-    l=shape_to_eigval(F, e, p)
+    #F, ee, pp=1., 0.5, 0.2
+    F, ee, pp=1., 0., 0.
+    l=shape_to_eigval(F, ee, pp)
     print 'testing lambda:', l
 
     traj=get_elliptraj_one(p, a, l)
-    print 'traj:', traj.shape
+    print 'traj:', traj
+    print 'traj shape:', traj.shape
+ 
+
+    eigval=eigval_to_shape(traj[:,0], traj[:,1], traj[:,2])
+    print 'eigval', eigval
 
     # ->> plot <<- #
-    #pl.plot( )    
+    pl.plot(a, eigval[0])    
+    pl.show()
      
 
     return
