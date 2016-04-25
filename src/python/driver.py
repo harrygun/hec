@@ -28,13 +28,19 @@ def ep_list(erange, elen, p_step=0.5):
             _p=_e
 	    n_p=1
 	else:
-	    n_p=np.ceil(2.*e/p_step)+2
-            _p=np.linspace(-e, e, n_p) 
+	    n_p=int(np.ceil(2.*e/p_step)+2)
+            _p=list(np.linspace(-e, e, n_p) )
             _e=[e]*n_p
 
-	elist.append(_e)
-	plist.append(_p)
+	elist=elist+_e
+	plist=plist+_p
+
         pnlist.append(n_p)
+
+
+    print 'plist.shape', np.array(plist).shape, np.array(elist).shape
+    print 'pnlist: ', len(pnlist), np.sum(pnlist)
+
 
     return  [elist, plist, pnlist]
 
@@ -45,14 +51,53 @@ def ep_list(erange, elen, p_step=0.5):
 
 def get_hec_trajs(p, dynvar, a, var_type):
 
-    #dynvar=[rho_lst, e_lst, p_lst, pn_lst]
+    if not var_type=='nu_e_p':
+        raise Exception('only nu_e_p type of initial condition is supported right now.')
+    
+    rho_lst, e_lst, p_lst, pn_lst=dynvar
+    rho, ell = mar.meshgrid(rho_lst, e_lst)
+    rho, pro = mar.meshgrid(rho_lst, p_lst)
 
-    if p.mpi  :
+    print 'shape:', rho.shape, ell.shape, pro.shape, ', e_lst len:', len(e_lst)
+
+    quit()
+
+    # ->> mpi idx <<- #
+    idx_fulllist=range(len(rho_lst))
+    if p.mpi:
+        idx=np.array_split(idx_fulllist, mpi.size)[mpi.rank]
+    else:
+        idx=idx_fulllist
+
+
+    # ->> now run <<- #
+    for i in idx:
+	for j in range(len(e_lst)):
+
+	    # ->> convert to eigenvalues first <<- #
+            lamb=elc.shape_to_eigval(rho[i], ell[j], pro[j])
+
+            # ->> 
+	    traj=elc.get_elliptraj_one(p, a, lamb):
 
 
 
+    # ->> gather <<- #
+    if mpi.size>1:
+        sg_ = np.array(mpi.world.gather(traj, root=0))
+    
+        if mpi.rank0:
+            sg=np.concatenate((sg_[0], sg_[1]), axis=0)
 
+            for i in range(2, mpi.size):
+                sg=np.concatenate((sg, sg_[i]), axis=0)
 
+        else:
+            sg=None
+    
+        sg=mpi.world.bcast(sg, root=0)
+
+        return sg
 
 
     return
@@ -91,18 +136,6 @@ if __name__=='__main__':
     root='../../workspace/result/'
 
 
-    ''' MPI initialization '''
-
-    if p.mpi:
-	calidx=mpi.mpirange(len(type_idx))
-        print 'rank: ', mpi.rank, calidx, type_idx[calidx]
-    else:
-        calidx=range(len(type_idx))
-        print calidx, type_idx[calidx]
-
-
-
-
 
     '''->> calculate ellipsoidal collapse model <<-'''
     ai, af, na = 0.01, 1., 500
@@ -112,7 +145,7 @@ if __name__=='__main__':
     #->> dynvar:  list of rho and e, p <<- #
     rho_lst=np.linspace(-1., 5., 101)
     #e_lst, p_lst, pn_lst=ep_list([0, 50.], 201, p_step=0.5)
-    dynvar=[rho_list]+ep_list([0, 50.], 201, p_step=0.5)
+    dynvar=[rho_lst]+ep_list([0, 50.], 201, p_step=0.5)
 
 
     ''' ->> now calculate the trajectories <<- '''

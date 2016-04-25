@@ -57,7 +57,7 @@ def dynamic_elc(p, a, var):
     # ->> 
     dnr=a**3./np.prod(l)-1.
     bj=bi(l)
-    l_ext=p.pk.D1(z)*np.([ ]) 
+    #l_ext=p.pk.D1(z)*np.([ ]) 
 
 
     #dyn_l=lambda idx: -mH**2*(olz+omz*l[idx]*(1./3.+dnr/3.+ dnr*bj[idx]/2.+l_ext[idx]))
@@ -81,7 +81,11 @@ def get_elliptraj_one(p, a, varl_0):
     other_args=list(dynvar)
     all_args=tuple([p]+other_args)
 
-    return myode.ode_solver(Lagrangian_dynamics_BJ94, ai, varl_0, a, args=all_args )
+    #->> set initial conditions <<- #
+
+    raise Exception('set IC for dot{a}.')
+
+    return myode.ode_solver(dynamic_elc, ai, varl_0, a, args=all_args )
 
 
 
@@ -89,9 +93,6 @@ def get_elliptraj_one(p, a, varl_0):
 
 def get_elliptraj(a, dynvar, var_type='nu_e_p'):
     ''' main routine to get ellipsoidal collapse trajectories '''
-
-
-
 
     if var_type=='nu_e_p':
         #->> change to eigenvalues <<- #
@@ -110,13 +111,23 @@ def get_elliptraj(a, dynvar, var_type='nu_e_p'):
     traj=np.zeros(l1.shape)
      
     #->> 
-    for i in range(  ):
-
-        traj[i]=get_elliptraj_one(p, a, varl_0)
+    #for i in range(  ):
+        #traj[i]=get_elliptraj_one(p, a, varl_0)
 
     return  
 
 
 
+def shape_to_eigval(F, e, p):
+    # ->> convert {F, e, p} to eigenvalues {lambda_i} <<- #
+    
+    l3=F/3.*(1.+3.*e+p)
+    l2=F/3.*(1.-2.*p)
+    l1=F/3.*(1.-3.*e+p)
+    
+    return [l1, l2, l3]
 
 
+def eigval_to_shape(l1, l2, l3):
+
+    return
