@@ -75,24 +75,54 @@ def dynamic_elc(p, a, var):
 
 
 
-def get_elliptraj_one(p, a, varl_0):
+def get_elliptraj_one(p, a, lambda_i, R, ):
     # ->> ODE solver for ONE given initial condition <<- #
+    # varl_0:   [lambda_i], so we also have to  d lambda_i/dlna 
+    # R:        initial Lagrangian size of the patch 
+    #
+
+    #->> set initial conditions <<- #
+    #raise Exception('set IC for dot{a}.')
+    a0=a[0] 
+    z0=1./a0-1.
+
+    a_i = [a0*   for i in range(3)]
+    da_i = [] 
+    
+    varl_0=a_i+da_i
+
 
     other_args=list(dynvar)
     all_args=tuple([p]+other_args)
 
-    #->> set initial conditions <<- #
 
-    raise Exception('set IC for dot{a}.')
-
-    return myode.ode_solver(dynamic_elc, ai, varl_0, a, args=all_args )
+    return myode.ode_solver(dynamic_elc, a0, varl_0, a, args=all_args )
 
 
+def shape_to_eigval(F, e, p):
+    # ->> convert {F, e, p} to eigenvalues {lambda_i} <<- #
+    
+    l3=F/3.*(1.+3.*e+p)
+    l2=F/3.*(1.-2.*p)
+    l1=F/3.*(1.-3.*e+p)
+    
+    return [l1, l2, l3]
+
+
+def eigval_to_shape(l1, l2, l3):
+
+    return
 
 
 
+
+
+
+
+
+'''
 def get_elliptraj(a, dynvar, var_type='nu_e_p'):
-    ''' main routine to get ellipsoidal collapse trajectories '''
+    # main routine to get ellipsoidal collapse trajectories #
 
     if var_type=='nu_e_p':
         #->> change to eigenvalues <<- #
@@ -115,19 +145,24 @@ def get_elliptraj(a, dynvar, var_type='nu_e_p'):
         #traj[i]=get_elliptraj_one(p, a, varl_0)
 
     return  
+'''
 
 
 
-def shape_to_eigval(F, e, p):
-    # ->> convert {F, e, p} to eigenvalues {lambda_i} <<- #
-    
-    l3=F/3.*(1.+3.*e+p)
-    l2=F/3.*(1.-2.*p)
-    l1=F/3.*(1.-3.*e+p)
-    
-    return [l1, l2, l3]
 
 
-def eigval_to_shape(l1, l2, l3):
+''' ->> some testing routines <<- '''
+def elltraj_test(p, a):
+
+    F, e, p=1., 0.5, 0.2
+    l=shape_to_eigval(F, e, p)
+
+
 
     return
+
+
+
+
+
+

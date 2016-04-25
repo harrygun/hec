@@ -74,41 +74,34 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
     # ->> now run <<- #
     for i in idx:
-	for j in range(len(e_lst)):
+        traj=[]
 
+        _traj=np.zeros(e_lst.shape)
+	for j in range(len(e_lst)):
 	    # ->> convert to eigenvalues first <<- #
             lamb=elc.shape_to_eigval(rho[i,j], ell[i,j], pro[i,j])
 
             # ->> 
-	    traj=[]
-	    _traj=np.zeros(e_lst.shape)
 	    _traj[j]=elc.get_elliptraj_one(p, a, lamb):
 
-	    traj.append(_traj)
-
-
-
+        traj.append(_traj)
 
 
     # ->> gather <<- #
     if mpi.size>1:
-        sg_ = np.array(mpi.world.gather(traj, root=0))
+        _trajall = np.array(mpi.world.gather(traj, root=0))
     
         if mpi.rank0:
-            sg=np.concatenate((sg_[0], sg_[1]), axis=0)
-
+            trajall=np.concatenate((_trajall[0], _trajall[1]), axis=0)
             for i in range(2, mpi.size):
-                sg=np.concatenate((sg, sg_[i]), axis=0)
-
+                trajall=np.concatenate((trajall, _trajall[i]), axis=0)
         else:
-            sg=None
+            trajall=None
     
-        sg=mpi.world.bcast(sg, root=0)
-
-        return sg
-
-
-    return
+        trajall=mpi.world.bcast(trajall, root=0)
+        return np.array(trajall)
+    else:
+        return np.array(traj)
 
 
 
@@ -159,8 +152,17 @@ if __name__=='__main__':
     ''' ->> now calculate the trajectories <<- '''
     var_type='nu_e_p'    #eigenvalues
     #elc.get_elliptraj(a, dynvar, var_type=var_type)
-    get_hec_trajs(p, dynvar, a, var_type)
+    traj=get_hec_trajs(p, dynvar, a, var_type)
+
+    print 'final traj shape:', traj.shape
      
+
+
+    #->> write files <<- #
+    if mpi.rank0:
+        #->> 
+	fname=root+'traj.dat'
+	traj.tofile(fname)
 
 
 
