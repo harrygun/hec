@@ -17,6 +17,9 @@ import ode_solver as myode
 
 
 
+#R=10
+R=5.
+
 
 def bi(ai):
     # ->> t: time list <<- #
@@ -93,8 +96,8 @@ def get_elliptraj_one(p, a, lambda_i):
 
 
     # ->> initial condition <<- #
-    a_i = [a0*(1.-D0*lambda_i[i]) for i in range(3)]
-    da_i = [a_i[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
+    a_i = [a0*(1.-D0*lambda_i[i])*R for i in range(3)]
+    da_i = [a_i[i]-a0*D0*f0*lambda_i[i]*R for i in range(3)] 
     varl_0=a_i+da_i
     print 'IC:', varl_0
 
@@ -137,6 +140,10 @@ def eigval_to_shape(l1, l2, l3):
 ''' ->> some testing routines <<- '''
 def elltraj_test(p, a):
 
+    #->> 
+    ln_a=np.linspace(-4.6, 1, 100)
+    a=np.exp(ln_a)
+
     F, ee, pp=0.5, 0., 0.
     #F, ee, pp=1., 0., 0.
     l=shape_to_eigval(F, ee, pp)
@@ -156,7 +163,7 @@ def elltraj_test(p, a):
 
     for i in range(3):
         #ax[i].plot(a, shape[i])    
-        ax[i].plot(a, traj[:,i]/a, 'k-')    
+        ax[i].plot(a, traj[:,i]/a/R, 'k-')    
         #ax[i].plot(a, traj[:,i+3], 'b-')    
 
     pl.show()
