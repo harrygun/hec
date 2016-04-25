@@ -141,7 +141,7 @@ def eigval_to_shape(l1, l2, l3):
 def elltraj_test(p, a):
 
     #->> 
-    ln_a=np.linspace(-4.6, 1, 100)
+    ln_a=np.linspace(-4.6, 1, 500)
     a=np.exp(ln_a)
 
     F, ee, pp=0.5, 0., 0.
