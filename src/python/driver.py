@@ -60,7 +60,6 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
     print 'shape:', rho.shape, ell.shape, pro.shape, ', e_lst len:', len(e_lst)
 
-    quit()
 
     # ->> mpi idx <<- #
     idx_fulllist=range(len(rho_lst))
@@ -69,16 +68,25 @@ def get_hec_trajs(p, dynvar, a, var_type):
     else:
         idx=idx_fulllist
 
+    print 'rank: ', mpi.rank, idx
+    quit()
+
 
     # ->> now run <<- #
     for i in idx:
 	for j in range(len(e_lst)):
 
 	    # ->> convert to eigenvalues first <<- #
-            lamb=elc.shape_to_eigval(rho[i], ell[j], pro[j])
+            lamb=elc.shape_to_eigval(rho[i,j], ell[i,j], pro[i,j])
 
             # ->> 
-	    traj=elc.get_elliptraj_one(p, a, lamb):
+	    traj=[]
+	    _traj=np.zeros(e_lst.shape)
+	    _traj[j]=elc.get_elliptraj_one(p, a, lamb):
+
+	    traj.append(_traj)
+
+
 
 
 
