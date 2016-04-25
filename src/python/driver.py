@@ -137,7 +137,7 @@ if __name__=='__main__':
 
 
     '''->> calculate ellipsoidal collapse model <<-'''
-    ai, af, na = 0.01, 1., 500
+    ai, af, na = 0.01, 1., 200
     a=np.linspace(ai, af, na)
 
 
