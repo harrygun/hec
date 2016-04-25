@@ -17,8 +17,6 @@ import ode_solver as myode
 
 
 
-#R=10
-R=5.
 
 
 def bi(ai):
@@ -54,6 +52,7 @@ def dynamic_elc(p, lna, var, other_args):
 
     li=np.array(other_args)
     a_i, da_i = var[:3], var[3:]
+    print len(a_i), len(da_i)
 
     z=1./a-1.
     omz=p.pk.om0z(z)
@@ -96,8 +95,8 @@ def get_elliptraj_one(p, a, lambda_i):
 
 
     # ->> initial condition <<- #
-    a_i = [a0*(1.-D0*lambda_i[i])*R for i in range(3)]
-    da_i = [a_i[i]-a0*D0*f0*lambda_i[i]*R for i in range(3)] 
+    a_i = [a0*(1.-D0*lambda_i[i]) for i in range(3)]
+    da_i = [a_i[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
     varl_0=a_i+da_i
     print 'IC:', varl_0
 
@@ -163,7 +162,7 @@ def elltraj_test(p, a):
 
     for i in range(3):
         #ax[i].plot(a, shape[i])    
-        ax[i].plot(a, traj[:,i]/a/R, 'k-')    
+        ax[i].plot(a, traj[:,i]/a, 'k-')    
         #ax[i].plot(a, traj[:,i+3], 'b-')    
 
     pl.show()
