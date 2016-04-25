@@ -64,11 +64,9 @@ def dynamic_elc(p, lna, var, other_args):
     #print 'inside dynamic_elc li: ', a, p.pk.D1(z)*(li)
     #print a, dnr
 
-
-    #dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*\
-    #                    (bj[idx]*dnr/2.+lambda_ext[idx])*a_i[idx]  
-
-    dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*(dnr/3.)*a_i[idx]  
+    dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*\
+                        (bj[idx]*dnr/2.+lambda_ext[idx])*a_i[idx]  
+    #dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*(dnr/3.)*a_i[idx]  
 
     # ->> derivative <<- #
     ai_p = da_i
@@ -93,7 +91,7 @@ def get_elliptraj_one(p, a, lambda_i):
     D0=p.pk.D1(z0)
     f0=p.pk.f(z0)
 
-    raise Exception('there is an error about R, and probably the dynamic equation.')
+    #raise Exception('there is an error about R, and probably the dynamic equation.')
     R=5.
 
     # ->> initial condition <<- #
@@ -142,7 +140,7 @@ def eigval_to_shape(l1, l2, l3):
 def elltraj_test(p, a):
 
     #F, ee, pp=1.686, 0., 0.
-    F, ee, pp=5., 0., 0.
+    F, ee, pp=10., 0., 0.
     l=shape_to_eigval(F, ee, pp)
     print 'testing lambda:', l
 
