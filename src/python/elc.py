@@ -91,12 +91,10 @@ def get_elliptraj_one(p, a, lambda_i):
     D0=p.pk.D1(z0)
     f0=p.pk.f(z0)
 
-    #raise Exception('there is an error about R, and probably the dynamic equation.')
-    R=5.
 
     # ->> initial condition <<- #
-    a_i = [a0*(1.-D0*lambda_i[i])*R for i in range(3)]
-    da_i = [a_i[i]-a0*D0*f0*lambda_i[i]*R for i in range(3)] 
+    a_i = [a0*(1.-D0*lambda_i[i]) for i in range(3)]
+    da_i = [a_i[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
     varl_0=a_i+da_i
     print 'IC:', varl_0
 
@@ -139,8 +137,8 @@ def eigval_to_shape(l1, l2, l3):
 ''' ->> some testing routines <<- '''
 def elltraj_test(p, a):
 
-    #F, ee, pp=1.686, 0., 0.
-    F, ee, pp=10., 0., 0.
+    F, ee, pp=2., 0., 0.
+    #F, ee, pp=1., 0., 0.
     l=shape_to_eigval(F, ee, pp)
     print 'testing lambda:', l
 
@@ -155,11 +153,10 @@ def elltraj_test(p, a):
     nplt, ncol = 3, 3
     fig, ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5., gap_size=0.5, return_figure=True)
 
-    R=5.
 
     for i in range(3):
         #ax[i].plot(a, shape[i])    
-        ax[i].plot(a, traj[:,i]/a/R, 'k-')    
+        ax[i].plot(a, traj[:,i]/a, 'k-')    
         #ax[i].plot(a, traj[:,i+3], 'b-')    
 
     pl.show()
