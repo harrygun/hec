@@ -2,6 +2,7 @@ import scipy as sp
 import numpy as np
 import pynbody as pn
 import sympy.mpmath as mpmath
+import scipy.integrate as integ
 import pylab as pl
 
 import genscript.progcontrol as pc
@@ -14,6 +15,7 @@ import genscript.read as rd
 import misc
 
 import ode_solver as myode
+_mx_step_=1000
 
 
 
@@ -29,8 +31,8 @@ def bi(ai):
     for i in range(3):
         idx=np.delete(idxall, i)
         #print 'calculating RD at', idx[0], idx[1], i
-
         #b.append(2./3.*(mpmath.elliprd(ai[idx[0]], ai[idx[1]], ai[i])*np.prod(ai)-1.))
+
         b.append(np.float64(2./3.*mpmath.elliprd(ai[idx[0]]**2., ai[idx[1]]**2., ai[i]**2.)*np.prod(ai)))
 
     return b
@@ -40,7 +42,7 @@ def bi(ai):
 
 
 
-def dynamic_elc(p, lna, var, other_args):
+def dynamic_elc(var, lna, p, other_args):
     ''' ->> ellipsoidal collapse dynamics to be solved <<- 
         p:    prog controller, include cosmological routines 
 	var:  ODE integrator variables 
@@ -51,8 +53,7 @@ def dynamic_elc(p, lna, var, other_args):
         raise Exception
 
     li=np.array(other_args)
-    a_i, da_i = var[:3], var[3:]
-    print len(a_i), len(da_i)
+    a_i, da_i = list(var[:3]), list(var[3:])
 
     z=1./a-1.
     omz=p.pk.om0z(z)
@@ -63,8 +64,6 @@ def dynamic_elc(p, lna, var, other_args):
     dnr=a**3./np.prod(a_i)-1.
     bj=bi(a_i)
     lambda_ext=p.pk.D1(z)*(li-np.sum(li)/3.)
-    #print 'inside dynamic_elc li: ', a, p.pk.D1(z)*(li)
-    #print a, dnr
 
     dyn_ai = lambda idx: (1.+qt)*da_i[idx]+(olz-omz/2.)*a_i[idx]-3./2.*omz*\
                         (bj[idx]*dnr/2.+lambda_ext[idx])*a_i[idx]  
@@ -86,8 +85,8 @@ def get_elliptraj_one(p, a, lambda_i):
     # lambda_i: initial eigenvalues evaluated at z=0, so initial value = D(t_i) lambda_i
     # R:        initial Lagrangian size of the patch (NOT using)
 
+
     #->> set initial conditions <<- #
-    #raise Exception('set IC for dot{a}.')
     a0=a[0] 
     z0=1./a0-1.
     D0=p.pk.D1(z0)
@@ -106,9 +105,9 @@ def get_elliptraj_one(p, a, lambda_i):
 
     #->> return the result from ODE solver <<- #
     lna=np.log(a)
-    lna0=lna[0]
 
-    return myode.ode_solver_general(dynamic_elc, lna0, varl_0, lna, args=all_args)
+    return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args)) #, mxstep=_mx_step_)
+
 
 
 
@@ -143,8 +142,10 @@ def elltraj_test(p, a):
     ln_a=np.linspace(-4.6, 0., 500)
     a=np.exp(ln_a)
 
-    F, ee, pp=0.5, 0., 0.
-    #F, ee, pp=1., 0., 0.
+    F, ee, pp=0.5, 0.2, 0.1
+    #F, ee, pp=1.686, 0., 0.
+
+
     l=shape_to_eigval(F, ee, pp)
     print 'testing lambda:', l
 
@@ -154,6 +155,7 @@ def elltraj_test(p, a):
  
     shape=eigval_to_shape(traj[:,0], traj[:,1], traj[:,2])
     #print 'shape', shape
+
 
     # ->> plot <<- #
     nplt, ncol = 3, 3
@@ -172,36 +174,6 @@ def elltraj_test(p, a):
 
 
 
-
-
-
-
-'''
-def get_elliptraj(a, dynvar, var_type='nu_e_p'):
-    # main routine to get ellipsoidal collapse trajectories #
-
-    if var_type=='nu_e_p':
-        #->> change to eigenvalues <<- #
-	F, e, p = dynvar
-
-        l3=F/3.*(1.+3.*e+p)
-        l2=F/3.*(1.-2.*p)
-        l1=F/3.*(1.-3.*e+p)
-
-        varl_0=[l1, l2, l3]
-    else:
-        varl_0=dynvar
-
-
-    print 'varl_0 shape:', varl_0.shape
-    traj=np.zeros(l1.shape)
-     
-    #->> 
-    #for i in range(  ):
-        #traj[i]=get_elliptraj_one(p, a, varl_0)
-
-    return  
-'''
 
 
 

@@ -144,8 +144,6 @@ if __name__=='__main__':
     _testing_=True
     if _testing_==True:
         elc.elltraj_test(p, a)
-
-
         p.finalize()
 	quit()
 
