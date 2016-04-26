@@ -141,12 +141,11 @@ if __name__=='__main__':
     a=np.linspace(ai, af, na)
 
 
-    _testing_=True
+    _testing_=False
     if _testing_==True:
         elc.elltraj_test(p, a)
         p.finalize()
 	quit()
-
 
 
     #->> dynvar:  list of rho and e, p <<- #
