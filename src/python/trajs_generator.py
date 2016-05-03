@@ -46,7 +46,31 @@ def ep_list(erange, elen, p_step=0.5):
 
 
 
+def gather_mpi(traj):
+    # ->> gather <<- #
 
+    if mpi.size>1:
+        print 'gather all results from all threads'
+        _trajall = np.array(mpi.world.gather(traj, root=0))
+    
+        if mpi.rank0:
+            trajall=np.concatenate((_trajall[0], _trajall[1]), axis=0)
+            for i in range(2, mpi.size):
+                trajall=np.concatenate((trajall, _trajall[i]), axis=0)
+        else:
+            trajall=None
+    
+        trajall=mpi.world.bcast(trajall, root=0)
+        return np.array(trajall)
+    else:
+        return np.array(traj)
+
+
+
+''' --------------------------------------------------------
+              ->>   trajectories generator <<- 
+    --------------------------------------------------------
+'''
 def get_hec_trajs(p, dynvar, a, var_type):
 
     if not var_type=='nu_e_p':
@@ -103,6 +127,42 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
 
 
+def get_sc_trajs(p, dynvar, a, var_type):
+    ''' ->> spherical collapse trajectories <<- '''
+
+    if not var_type=='rho_only':
+        raise Exception('only `rho_only` IC is supported here.')
+    
+    rho_lst=dynvar
+    print '`get_sc_trajs`: rho_lst shape:', rho.shape
+
+
+    # ->> MPI parallization idx <<- #
+    idx_fulllist=range(len(rho_lst))
+    if p.mpi:
+        idx=np.array_split(idx_fulllist, mpi.size)[mpi.rank]
+    else:
+        idx=idx_fulllist
+
+    print 'rank: ', mpi.rank, idx
+
+
+    # ->> now run trajectory integrator ... <<- #
+    traj=[]
+    for i in idx:
+
+        # ->> convert to eigenvalues first <<- #
+        lamb=elc.shape_to_eigval(rho[i], 0., 0.)
+        _traj=elc.get_elliptraj_one(p, a, lamb)
+
+        traj.append(_traj)
+
+    return gather_mpi(traj)
+
+
+
+
+
 
 
 
@@ -115,7 +175,7 @@ traj_type_list=['testing',
 		'2D_ellipsoidal_collapse',
                 ]
 
-def generate_trajs(p, traj_type):
+def generate_trajs(p, traj_type, para_boundary='default'):
 
     if not traj_type in traj_type_list:
         raise Exception('traj_type NOT supported.')
@@ -136,18 +196,15 @@ def generate_trajs(p, traj_type):
     if traj_type=='spherical_collapse':
 
         #->> dynvar:  list of rho and e, p <<- #
-        rho_lst=np.linspace(-1., 5., 101)
-        #e_lst, p_lst, pn_lst=ep_list([0, 50.], 201, p_step=0.5)
-        dynvar=[rho_lst]+ep_list([0, 50.], 201, p_step=0.5)
+        rho_lst=np.linspace(-1., 1.686, 101)
+        traj=get_sc_trajs(p, rho_lst, a, 'rho_only')
+
+        print 'final SC traj shape:', traj.shape
 
 
-        ''' ->> now calculate the trajectories <<- '''
-        var_type='nu_e_p'    #eigenvalues
-        #elc.get_elliptraj(a, dynvar, var_type=var_type)
-        traj=get_hec_trajs(p, dynvar, a, var_type)
-
-        print 'final traj shape:', traj.shape
-
+    # ->> run ellipsoidal collapse parameter space <<- #
+    if traj_type=='2D_ellipsoidal_collapse':
+        raise Exception('EC NOT supported yet.')
 
 
     return traj
