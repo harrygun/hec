@@ -59,10 +59,10 @@ if __name__=='__main__':
     ''' ->> now save data <<- '''
     if (traj!=None)&(mpi.rank0):
 	fname_dat=root+'traj'+traj_type+'.dat'
-	fname_npz=root+'traj'+traj_type+'.npz'
+	fname_npy=root+'traj'+traj_type+'.npy'
 
 	traj.tofile(fname_dat)
-	np.save(fname_npz, traj)
+	np.save(fname_npy, traj)
 
 
     
