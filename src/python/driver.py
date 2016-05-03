@@ -105,6 +105,54 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
 
 
+''' --------------------------------------------------------
+              ->> generator of trajectories <<- 
+    --------------------------------------------------------
+'''
+traj_type_list=['testing', 
+                'spherical_collapse',
+		'2D_ellipsoidal_collapse',
+                ]
+
+
+def generate_trajs(p, traj_type):
+
+    if not traj_type in traj_type_list:
+        raise Exception('traj_type NOT supported.')
+
+
+    '''->> calculate ellipsoidal collapse model <<-'''
+    # ->> initialization <<- #
+    ai, af, na = 0.01, 1., 200
+    a=np.linspace(ai, af, na)
+
+
+    # ->> perform some tests <<- #
+    if traj_type=='testing':
+        elc.elltraj_test(p, a)
+        traj=None
+
+    # ->> run spherical collapse <<- #
+    if traj_type=='spherical_collapse':
+
+        #->> dynvar:  list of rho and e, p <<- #
+        rho_lst=np.linspace(-1., 5., 101)
+        #e_lst, p_lst, pn_lst=ep_list([0, 50.], 201, p_step=0.5)
+        dynvar=[rho_lst]+ep_list([0, 50.], 201, p_step=0.5)
+
+
+        ''' ->> now calculate the trajectories <<- '''
+        var_type='nu_e_p'    #eigenvalues
+        #elc.get_elliptraj(a, dynvar, var_type=var_type)
+        traj=get_hec_trajs(p, dynvar, a, var_type)
+
+        print 'final traj shape:', traj.shape
+
+
+
+    return traj
+
+
 
 
 
@@ -117,9 +165,11 @@ param_dict={
     }
 
 prog_control={
-    'do_testing': False, 
+    #'do_testing': False, 
     #-------------------------------#
+    #'do_spherical_collapse':    True,
     #-------------------------------#
+    'traj_generator_type':  'testing'
     }
 
 
@@ -133,43 +183,24 @@ if __name__=='__main__':
     p=pc.prog_init(**init_dict)
 
     root='../../workspace/result/'
-
-
-
-    '''->> calculate ellipsoidal collapse model <<-'''
-    ai, af, na = 0.01, 1., 200
-    a=np.linspace(ai, af, na)
-
-
-    _testing_=False
-    if _testing_==True:
-        elc.elltraj_test(p, a)
-        p.finalize()
-	quit()
-
-
-    #->> dynvar:  list of rho and e, p <<- #
-    rho_lst=np.linspace(-1., 5., 101)
-    #e_lst, p_lst, pn_lst=ep_list([0, 50.], 201, p_step=0.5)
-    dynvar=[rho_lst]+ep_list([0, 50.], 201, p_step=0.5)
-
-
-    ''' ->> now calculate the trajectories <<- '''
-    var_type='nu_e_p'    #eigenvalues
-    #elc.get_elliptraj(a, dynvar, var_type=var_type)
-    traj=get_hec_trajs(p, dynvar, a, var_type)
-
-    print 'final traj shape:', traj.shape
      
 
 
-    #->> write files <<- #
-    if mpi.rank0:
-        #->> 
+    # ------------->> generating trajectories <<--------------- #
+    # ->> traj_type_list=['testing', 'spherical_collapse',  <<- #
+    # ->>                 '2D_ellipsoidal_collapse', ]      <<- #
+    # ------------->> generating trajectories <<--------------- #
+
+    #traj_type='testing'
+    traj_type='spherical_collapse'
+
+    traj=generate_trajs(p, traj_type)
+
+
+    ''' ->> now save data <<- '''
+    if (traj!=None)&(mpi.rank0):
 	fname=root+'traj.dat'
 	traj.tofile(fname)
-
-
 
 
 
