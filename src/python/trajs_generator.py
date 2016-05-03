@@ -159,7 +159,7 @@ def get_sc_trajs(p, dynvar, a, var_type):
 
 	ctraj=elc.lambda_comving(_traj[:,0], _traj[:,1], _traj[:,2], a)
         delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
-	dd=np.rollaxis(np.concatenate((ctraj, np.array([delta])), axis=0), 1)
+	dd=np.rollaxis(np.concatenate((np.array([ctraj[0]]), np.array([delta])), axis=0), 1)
 
         traj.append(dd)
 
@@ -203,7 +203,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     if traj_type=='spherical_collapse':
 
         #->> dynvar:  list of rho and e, p <<- #
-        rho_lst=np.linspace(-1., 1.686, 501)
+        rho_lst=np.linspace(-1., 1.68, 500)
         traj=get_sc_trajs(p, rho_lst, a, 'rho_only')
 
         print 'final SC traj shape:', traj.shape

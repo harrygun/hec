@@ -63,17 +63,20 @@ if __name__=='__main__':
     ''' ->> now save data <<- '''
     if ((type(traj)==list)|(type(traj)==np.ndarray))&(mpi.rank0):
 	fname_dat=root+'traj_'+traj_type+'.dat'
+	fname_dat_a=root+'traj_'+traj_type+'_a.dat'
+
 	fname_npz=root+'traj_'+traj_type
 	fname_txt=root+'traj_'+traj_type+'.txt'
-        
+
+	print 'traj shape:', traj.shape
+
 	#->> bindary data <<- #
 	traj.tofile(fname_dat)
+	a.tofile(fname_dat_a)
 
 	#->> numpy arrays <<- #
 	np.savez(fname_npz, traj=traj, a=a)
 
-        #->> ASCII txt files <<- #
-	for i
 
     
     # ->> The End <<- #
