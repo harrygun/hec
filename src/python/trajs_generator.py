@@ -133,12 +133,12 @@ def get_sc_trajs(p, dynvar, a, var_type):
     if not var_type=='rho_only':
         raise Exception('only `rho_only` IC is supported here.')
     
-    rho_lst=dynvar
-    print '`get_sc_trajs`: rho_lst shape:', rho.shape
+    rho=dynvar
+    print '`get_sc_trajs`: rho shape:', rho.shape
 
 
     # ->> MPI parallization idx <<- #
-    idx_fulllist=range(len(rho_lst))
+    idx_fulllist=range(len(rho))
     if p.mpi:
         idx=np.array_split(idx_fulllist, mpi.size)[mpi.rank]
     else:
