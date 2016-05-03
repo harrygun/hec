@@ -51,19 +51,29 @@ if __name__=='__main__':
     # ->>                 '2D_ellipsoidal_collapse', ]      <<- #
     # ------------->> generating trajectories <<--------------- #
 
+    ai, af, na = 0.01, 1., 200
+    a=np.linspace(ai, af, na)
+
     #traj_type='testing'
     traj_type='spherical_collapse'
-    traj=gtraj.generate_trajs(p, traj_type)
+
+    traj=gtraj.generate_trajs(p, traj_type, a=a)
 
 
     ''' ->> now save data <<- '''
-    if (traj!=None)&(mpi.rank0):
-	fname_dat=root+'traj'+traj_type+'.dat'
-	fname_npy=root+'traj'+traj_type+'.npy'
-
+    if ((type(traj)==list)|(type(traj)==np.ndarray))&(mpi.rank0):
+	fname_dat=root+'traj_'+traj_type+'.dat'
+	fname_npz=root+'traj_'+traj_type
+	fname_txt=root+'traj_'+traj_type+'.txt'
+        
+	#->> bindary data <<- #
 	traj.tofile(fname_dat)
-	np.save(fname_npy, traj)
 
+	#->> numpy arrays <<- #
+	np.savez(fname_npz, traj=traj, a=a)
+
+        #->> ASCII txt files <<- #
+	for i
 
     
     # ->> The End <<- #

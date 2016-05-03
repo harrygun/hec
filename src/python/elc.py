@@ -97,7 +97,7 @@ def get_elliptraj_one(p, a, lambda_i):
     a_i = [a0*(1.-D0*lambda_i[i]) for i in range(3)]
     da_i = [a_i[i]-a0*D0*f0*lambda_i[i] for i in range(3)] 
     varl_0=a_i+da_i
-    print 'IC:', varl_0
+    #print 'IC:', varl_0
 
     # ->> arguments <<- #
     other_args=list(lambda_i)
@@ -133,6 +133,18 @@ def eigval_to_shape(l1, l2, l3):
 
 
 
+def lambda_comving(l1, l2, l3, a):
+    # ->> return comoving eigvalues <<- #
+    return np.array([l1/a, l2/a, l3/a])
+
+
+def lambda_to_rho(l1, l2, l3, a):
+    # ->> lambda to density contrast <<- #
+    return  a**3./(l1*l2*l3)-1.
+
+def clambda_to_rho(cl1, cl2, cl3):
+    # ->> comoving lambda to density contrast <<- #
+    return  1./(cl1*cl2*cl3)-1.
 
 ''' --------------------------------------------------------
               ->>   some testing routines   <<- 

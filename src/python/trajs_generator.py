@@ -144,18 +144,24 @@ def get_sc_trajs(p, dynvar, a, var_type):
     else:
         idx=idx_fulllist
 
-    print 'rank: ', mpi.rank, idx
+    #print 'rank: ', mpi.rank, idx
 
 
     # ->> now run trajectory integrator ... <<- #
     traj=[]
     for i in idx:
 
+	print '{0}-th SC traj: ic_rho={1}'.format(i, rho[i])
+
         # ->> convert to eigenvalues first <<- #
         lamb=elc.shape_to_eigval(rho[i], 0., 0.)
-        _traj=elc.get_elliptraj_one(p, a, lamb)
+        _traj=elc.get_elliptraj_one(p, a, lamb)[:,:3]
 
-        traj.append(_traj)
+	ctraj=elc.lambda_comving(_traj[:,0], _traj[:,1], _traj[:,2], a)
+        delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
+	dd=np.rollaxis(np.concatenate((ctraj, np.array([delta])), axis=0), 1)
+
+        traj.append(dd)
 
     return gather_mpi(traj)
 
@@ -175,7 +181,7 @@ traj_type_list=['testing',
 		'2D_ellipsoidal_collapse',
                 ]
 
-def generate_trajs(p, traj_type, para_boundary='default'):
+def generate_trajs(p, traj_type, a='default', para_boundary='default'):
 
     if not traj_type in traj_type_list:
         raise Exception('traj_type NOT supported.')
@@ -183,8 +189,9 @@ def generate_trajs(p, traj_type, para_boundary='default'):
 
     '''->> calculate ellipsoidal collapse model <<-'''
     # ->> initialization <<- #
-    ai, af, na = 0.01, 1., 200
-    a=np.linspace(ai, af, na)
+    if (a=='default'):
+        ai, af, na = 0.01, 1., 200
+        a=np.linspace(ai, af, na)
 
 
     # ->> perform some tests <<- #
@@ -196,7 +203,7 @@ def generate_trajs(p, traj_type, para_boundary='default'):
     if traj_type=='spherical_collapse':
 
         #->> dynvar:  list of rho and e, p <<- #
-        rho_lst=np.linspace(-1., 1.686, 101)
+        rho_lst=np.linspace(-1., 1.686, 501)
         traj=get_sc_trajs(p, rho_lst, a, 'rho_only')
 
         print 'final SC traj shape:', traj.shape
