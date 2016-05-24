@@ -45,6 +45,8 @@ if __name__=='__main__':
     root='../../workspace/result/'
      
 
+    print 'cospar:', p.cp.H0, p.cp.omem
+    quit()
 
     # ------------->> generating trajectories <<--------------- #
     # ->> traj_type_list=['testing', 'spherical_collapse',  <<- #
