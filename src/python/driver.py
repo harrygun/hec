@@ -49,7 +49,7 @@ if __name__=='__main__':
      
 
     print 'Cospar:', p.cp.H0, p.cp.h, p.cp.omem, p.cp.omeb, p.cp.omec
-    quit()
+    #quit()
 
     # ------------->> generating trajectories <<--------------- #
     # ->> traj_type_list=['testing', 'spherical_collapse',  <<- #

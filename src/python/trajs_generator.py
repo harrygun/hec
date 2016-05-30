@@ -190,7 +190,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     '''->> calculate ellipsoidal collapse model <<-'''
     # ->> initialization <<- #
     if (a=='default'):
-        ai, af, na = 0.01, 1., 200
+        ai, af, na = 0.001, 1., 200
         a=np.linspace(ai, af, na)
 
 
@@ -203,7 +203,9 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     if traj_type=='spherical_collapse':
 
         #->> dynvar:  list of rho and e, p <<- #
-        rho_lst=np.linspace(-1., 1.68, 500)
+        #rho_lst=np.linspace(-1., 1.68, 500)
+        rho_lst=-1.+np.logspace(-4., np.log10(2.68), 500)
+
         traj=get_sc_trajs(p, rho_lst, a, 'rho_only')
 
         print 'final SC traj shape:', traj.shape
