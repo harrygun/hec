@@ -129,6 +129,7 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
 def get_sc_trajs(p, dynvar, a, var_type):
     ''' ->> spherical collapse trajectories <<- '''
+    #print 'rank: ', mpi.rank, idx
 
     if not var_type=='rho_only':
         raise Exception('only `rho_only` IC is supported here.')
@@ -143,8 +144,6 @@ def get_sc_trajs(p, dynvar, a, var_type):
         idx=np.array_split(idx_fulllist, mpi.size)[mpi.rank]
     else:
         idx=idx_fulllist
-
-    #print 'rank: ', mpi.rank, idx
 
 
     # ->> now run trajectory integrator ... <<- #
@@ -163,8 +162,8 @@ def get_sc_trajs(p, dynvar, a, var_type):
         delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
 	dd=np.rollaxis(np.concatenate((np.array([ctraj[0]]), np.array([delta])), axis=0), 1)
 
-        #print dd
-	print _traj
+        print dd
+	#print _traj
         quit()
 
         traj.append(dd)
