@@ -163,8 +163,9 @@ def get_sc_trajs(p, dynvar, a, var_type):
         delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
 	dd=np.rollaxis(np.concatenate((np.array([ctraj[0]]), np.array([delta])), axis=0), 1)
 
-        print dd
-	quit()
+        #print dd
+	print _traj
+        quit()
 
         traj.append(dd)
 
