@@ -162,9 +162,8 @@ def get_sc_trajs(p, dynvar, a, var_type):
         delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
 	dd=np.rollaxis(np.concatenate((np.array([ctraj[0]]), np.array([delta])), axis=0), 1)
 
-        print dd
+        #print dd
 	#print _traj
-	quit()
 
         traj.append(dd)
 
@@ -195,7 +194,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     '''->> calculate ellipsoidal collapse model <<-'''
     # ->> initialization <<- #
     if (a=='default'):
-        ai, af, na = 0.01, 1., 200
+        ai, af, na = 0.001, 1., 200
         a=np.linspace(ai, af, na)
 
 
