@@ -124,6 +124,10 @@ def shape_to_eigval(F, e, p):
     return [l1, l2, l3]
 
 
+def delta_to_eigval_sc(F):
+    l=1.-(1./(1.+F))**(1./3.)
+    return [l]*3
+
 
 def eigval_to_shape(l1, l2, l3):
     #->> convert {l1, l2, l3} into {F, e, p} <<- #
