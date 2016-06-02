@@ -92,7 +92,7 @@ def get_elliptraj_one(p, a, lambda_i):
     D0=p.pk.D1(z0)
     f0=p.pk.f(z0)
 
-    print 'z0, D0=', z0, D0
+    #print 'z0, D0=', z0, D0
 
 
     # ->> initial condition <<- #
