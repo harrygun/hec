@@ -151,8 +151,7 @@ def get_sc_trajs(p, dynvar, a, var_type):
     for i in idx:
 
         # ->> convert to eigenvalues first <<- #
-        #lamb=elc.shape_to_eigval(rho[i], 0., 0.)
-	lamb=elc.delta_to_eigval_sc(rho[i])
+        lamb=elc.shape_to_eigval(rho[i], 0., 0.)
 
 	print '{0}-th SC traj: ic_rho={1}, lamb={2}'.format(i, rho[i], lamb)
 
@@ -162,8 +161,6 @@ def get_sc_trajs(p, dynvar, a, var_type):
         delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
 	dd=np.rollaxis(np.concatenate((np.array([ctraj[0]]), np.array([delta])), axis=0), 1)
 
-        #print dd
-	#print _traj
 
         traj.append(dd)
 
@@ -207,8 +204,8 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     if traj_type=='spherical_collapse':
 
         #->> dynvar:  list of rho and e, p <<- #
-        rho_lst=np.linspace(-1.+1e-4, 1.68, 500)
-        #rho_lst=np.insert(-1.+np.logspace(-4., np.log10(2.68), 500), 0, -1.)
+        #rho_lst=np.linspace(-1.+1e-4, 1.68, 500)
+        rho_lst=np.linspace(-10., 1.68, 500)
 
         traj=get_sc_trajs(p, rho_lst, a, 'rho_only')
 
