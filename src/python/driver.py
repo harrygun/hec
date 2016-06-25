@@ -19,8 +19,8 @@ import trajs_generator as gtraj
 
 param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
-    'cosmology_parameter_fname': 'parameters/cosparameter.cfg',
-    'cosmology_parameter_sec': 'Cosmology_Parameters',
+    #'cosmology_parameter_fname': 'parameters/cosparameter.cfg',
+    #'cosmology_parameter_sec': 'Cosmology_Parameters',
     'a_init': 1e-3,
     'smooth_R': 0,
     'smooth_type': 'Gauss', 
@@ -47,9 +47,7 @@ if __name__=='__main__':
 
     root='../../workspace/result/'
      
-
     print 'Cospar:', p.cp.H0, p.cp.h, p.cp.omem, p.cp.omeb, p.cp.omec
-    #quit()
 
     # ------------->> generating trajectories <<--------------- #
     # ->> traj_type_list=['testing', 'spherical_collapse',  <<- #
