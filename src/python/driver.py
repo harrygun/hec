@@ -54,7 +54,7 @@ if __name__=='__main__':
     # ->>                 '2D_ellipsoidal_collapse', ]      <<- #
     # ------------->> generating trajectories <<--------------- #
 
-    ai, af, na = 0.001, 1., 200
+    ai, af, na = 0.01, 1., 200
     a=np.linspace(ai, af, na)
 
     #traj_type='testing'
