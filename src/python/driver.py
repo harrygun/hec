@@ -19,8 +19,8 @@ import trajs_generator as gtraj
 
 param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
-    #'cosmology_parameter_fname': 'parameters/cosparameter.cfg',
-    #'cosmology_parameter_sec': 'Cosmology_Parameters',
+    'cosmology_parameter_fname': 'parameters/cosparameter.cfg',
+    'cosmology_parameter_sec': 'Cosmology_Parameters',
     'a_init': 1e-3,
     'smooth_R': 0,
     'smooth_type': 'Gauss', 
@@ -54,7 +54,7 @@ if __name__=='__main__':
     # ->>                 '2D_ellipsoidal_collapse', ]      <<- #
     # ------------->> generating trajectories <<--------------- #
 
-    ai, af, na = 0.01, 1., 200
+    ai, af, na = 0.001, 1., 200
     a=np.linspace(ai, af, na)
 
     #traj_type='testing'

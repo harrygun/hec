@@ -204,8 +204,8 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     if traj_type=='spherical_collapse':
 
         #->> dynvar:  list of rho and e, p <<- #
-        rho_lst=np.linspace(-1., 1.67, 500)
-        #rho_lst=np.linspace(-10., 1.68, 500)
+        #rho_lst=np.linspace(-1., 1.68, 500)
+        rho_lst=np.linspace(-10., 1.68, 500)
 
         traj=get_sc_trajs(p, rho_lst, a, 'rho_only')
 
