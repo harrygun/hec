@@ -15,8 +15,12 @@ import genscript.read as rd
 import misc
 
 import ode_solver as myode
+
+
 _mx_step_=1000
 
+# ->> freezing fraction <<- #
+f_freeze=0.18
 
 
 
@@ -36,8 +40,6 @@ def bi(ai):
         b.append(np.float64(2./3.*mpmath.elliprd(ai[idx[0]]**2., ai[idx[1]]**2., ai[i]**2.)*np.prod(ai)))
 
     return b
-
-
 
 
 
@@ -72,6 +74,11 @@ def dynamic_elc(var, lna, p, other_args):
     # ->> derivative <<- #
     ai_p = da_i
     ai_pp= [dyn_ai(i) for i in range(3)]
+
+    for i in range(3):
+        if a_i[i]<=f_freeze*a
+            ai_p[i]=0.
+            ai_pp[i]=0.
 
     return ai_p+ai_pp
 
