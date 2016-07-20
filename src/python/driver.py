@@ -72,7 +72,7 @@ if __name__=='__main__':
         #eg, pg = mar.meshgrid(p.e_list, p.p_list)
 	print 'doing ellipsoidal_collapse_single_ep, sig=', sig, 'e/p=', p.e_list, p.p_list
 
-	pardict={'sig': sig, 'e': p.e_list, 'p': p.p_list, }
+	pardict={'sig': sig, 'ev': p.e_list, 'pv': p.p_list, }
 
 
     # ->> now run the trajectories generator <<- #

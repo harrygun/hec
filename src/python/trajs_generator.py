@@ -211,7 +211,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict
         # ->> get some extra information <<- #
         try:
             sig=pardict['sig'], 
-            _el, _pl = pardict['e'][0], pardict['p'][0]
+            _el, _pl = pardict['ev'][0], pardict['pv'][0]
 	    #ext_flag=pardict['ext_flag']
 	except:
 	    raise Exception()
