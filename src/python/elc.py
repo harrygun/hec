@@ -76,7 +76,7 @@ def dynamic_elc(var, lna, p, other_args):
     ai_pp= [dyn_ai(i) for i in range(3)]
 
     for i in range(3):
-        if a_i[i]<=f_freeze*a
+        if a_i[i]<=f_freeze*a:
             ai_p[i]=0.
             ai_pp[i]=0.
 
