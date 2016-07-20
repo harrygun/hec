@@ -8,9 +8,9 @@ import genscript.mpiutil as mpi
 import genscript.myarray as mar
 import cosmology.cosparameter as cospar
 
+import misc as misc
 import elc as elc
 import trajs_generator as gtraj
-
 
 
 
@@ -22,7 +22,7 @@ param_dict={
     'cosmology_parameter_fname': 'parameters/cosparameter.cfg',
     'cosmology_parameter_sec': 'Cosmology_Parameters',
     'a_init': 1e-3,
-    'smooth_R': 0,
+    'smooth_R': 10.,
     'smooth_type': 'Gauss', 
     'smooth_R_list_type':  'linear'
     }
@@ -30,9 +30,11 @@ param_dict={
 prog_control={
     #'do_testing': False, 
     #-------------------------------#
-    #'do_spherical_collapse':    True,
+    'traj_generator_type':  'testing',
     #-------------------------------#
-    'traj_generator_type':  'testing'
+    'e_list':  None, 
+    'p_list':  None, 
+    #-------------------------------#
     }
 
 
@@ -42,8 +44,9 @@ prog_control={
 if __name__=='__main__':
 
     # ->> initialization <<- #
+    sec='General'
     init_dict=myDict(prog_control)+myDict(param_dict)
-    p=pc.prog_init(init_cosmology=True, **init_dict)
+    p=pc.prog_init(section=sec, init_cosmology=True, **init_dict)
 
     root='../../workspace/result/'
      
@@ -54,7 +57,7 @@ if __name__=='__main__':
     # ->>                 '2D_ellipsoidal_collapse', ]      <<- #
     # ------------->> generating trajectories <<--------------- #
 
-    ai, af, na = 0.001, 1., 200
+    ai, af, na = p.a_init, 1., 200
     a=np.linspace(ai, af, na)
 
     #traj_type='testing'
@@ -62,11 +65,19 @@ if __name__=='__main__':
     traj_type='ellipsoidal_collapse_e_p_list'
 
     # ->> some further info <<- #
+    pardict={}
+
     if traj_type=='ellipsoidal_collapse_e_p_list':
-        e, p = 
+        sig=np.sqrt(misc.sig2(p, 0., R=p.smooth_R, window_type=p.smooth_type) )
+        #eg, pg = mar.meshgrid(p.e_list, p.p_list)
+	print 'doing ellipsoidal_collapse_e_p_list, sig=', sig, 'e/p=', p.e_list, p.p_list
 
+	pardict={'sig': sig, 'elist': p.e_list, 'plist': p.p_list, }
 
-    traj=gtraj.generate_trajs(p, traj_type, a=a)
+    quit()
+
+    # ->> now run the trajectories generator <<- #
+    traj=gtraj.generate_trajs(p, traj_type, a=a, **pardict)
 
 
     ''' ->> now save data <<- '''

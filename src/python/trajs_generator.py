@@ -76,7 +76,9 @@ def get_hec_trajs(p, dynvar, a, var_type):
     if not var_type=='nu_e_p':
         raise Exception('only nu_e_p type of initial condition is supported right now.')
     
-    rho_lst, e_lst, p_lst, pn_lst=dynvar
+    #rho_lst, e_lst, p_lst, pn_lst=dynvar
+    rho_lst, e_lst, p_lst=dynvar
+
     rho, ell = mar.meshgrid(rho_lst, e_lst)
     rho, pro = mar.meshgrid(rho_lst, p_lst)
 
@@ -172,7 +174,6 @@ def get_sc_trajs(p, dynvar, a, var_type):
 
 
 
-
 ''' --------------------------------------------------------
               ->> generator of trajectories <<- 
     --------------------------------------------------------
@@ -180,6 +181,7 @@ def get_sc_trajs(p, dynvar, a, var_type):
 traj_type_list=['testing', 
                 'spherical_collapse',
 		'2D_ellipsoidal_collapse',
+		'ellipsoidal_collapse_e_p_list',
                 ]
 
 def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict):
@@ -218,8 +220,18 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict
 
 
     if traj_type=='ellipsoidal_collapse_e_p_list':
+        # ->> get some extra information <<- #
+        try:
+            sig=pardict['sig'], 
+            el, pl = np.array(pardict['elist']), np.array(pardict['plist'])
+	except:
+	    raise Exception()
 
 
+        rhol=np.linspace(-10., 1.68, 500)
+        traj=get_hec_trajs(p, rhol, el, pl, a, 'rho_e_p')
+
+        print 'final SC traj shape:', traj.shape
 
 
     return traj
