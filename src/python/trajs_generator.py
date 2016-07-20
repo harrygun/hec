@@ -71,17 +71,19 @@ def gather_mpi(traj):
               ->>   trajectories generator <<- 
     --------------------------------------------------------
 '''
+#def get_hec_trajs(p, rho, ell, pro, a, var_type):
 def get_hec_trajs(p, dynvar, a, var_type):
     # ->> dynvar:  grid of dynamical variables <<- #
 
     if not var_type=='nu_e_p':
         raise Exception('only nu_e_p type of initial condition is supported right now.')
-    if dynvar.shape>2:
+    if len(np.array(dynvar).shape)>2:
         raise Exception()
     
-    ndim=dynvar.shape[1]
     rho, ell, pro = dynvar
-    print 'shape:', rho.shape, ell.shape, pro.shape
+    ndim=len(rho)
+    print 'dynvar shape:', rho.shape, ell.shape, pro.shape, 'ndim=', ndim
+
 
     # ->> mpi idx <<- #
     idx_fulllist=range(ndim)
@@ -224,7 +226,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict
         el=_el/(rhol/sig)
         pl=_pl*np.ones(rhol.shape)
 
-        traj=get_hec_trajs(p, rhol, el, pl, a, 'nu_e_p')
+        traj=get_hec_trajs(p, [rhol, el, pl], a, 'nu_e_p')
 
         print 'final HEC traj shape:', traj.shape
 
