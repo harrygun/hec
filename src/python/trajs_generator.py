@@ -213,8 +213,15 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
 
 
     # ->> run ellipsoidal collapse parameter space <<- #
-    if traj_type=='2D_ellipsoidal_collapse':
+    if traj_type=='1D_ellipsoidal_collapse':
+
         raise Exception('EC NOT supported yet.')
+
+        rho_lst=np.linspace(-10., 1.68, 500)
+	nu_lst=0.535*rho_lst
+        p_lst=np.array([0])
+
+        
 
 
     return traj
