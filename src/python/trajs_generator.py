@@ -71,7 +71,6 @@ def gather_mpi(traj):
               ->>   trajectories generator <<- 
     --------------------------------------------------------
 '''
-#def get_hec_trajs(p, rho, ell, pro, a, var_type):
 def get_hec_trajs(p, dynvar, a, var_type):
     # ->> dynvar:  grid of dynamical variables <<- #
 
@@ -106,11 +105,11 @@ def get_hec_trajs(p, dynvar, a, var_type):
         _traj=elc.get_elliptraj_one(p, a, lamb)[:,:3]
 	ctraj=elc.lambda_comving(_traj[:,0], _traj[:,1], _traj[:,2], a)
 
-        # ->> only return 
+        # ->> only return comoving lambda and delta <<- #
         delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
         dd=np.rollaxis(np.concatenate((np.array(ctraj), np.array([delta])), axis=0), 1)
 
-        traj.append(_traj)
+        traj.append(dd)
 
 
     return gather_mpi(traj)
