@@ -72,58 +72,46 @@ def gather_mpi(traj):
     --------------------------------------------------------
 '''
 def get_hec_trajs(p, dynvar, a, var_type):
+    # ->> dynvar:  grid of dynamical variables <<- #
 
     if not var_type=='nu_e_p':
         raise Exception('only nu_e_p type of initial condition is supported right now.')
+    if dynvar.shape>2:
+        raise Exception()
     
-    #rho_lst, e_lst, p_lst, pn_lst=dynvar
-    rho_lst, e_lst, p_lst=dynvar
-
-    rho, ell = mar.meshgrid(rho_lst, e_lst)
-    rho, pro = mar.meshgrid(rho_lst, p_lst)
-
-    print 'shape:', rho.shape, ell.shape, pro.shape, ', e_lst len:', len(e_lst)
-
+    ndim=dynvar.shape[1]
+    rho, ell, pro = dynvar
+    print 'shape:', rho.shape, ell.shape, pro.shape
 
     # ->> mpi idx <<- #
-    idx_fulllist=range(len(rho_lst))
+    idx_fulllist=range(ndim)
     if p.mpi:
         idx=np.array_split(idx_fulllist, mpi.size)[mpi.rank]
     else:
         idx=idx_fulllist
 
     print 'rank: ', mpi.rank, idx
-    quit()
 
 
     # ->> now run <<- #
+    traj=[]
     for i in idx:
-        traj=[]
 
-        _traj=np.zeros(e_lst.shape)
-	for j in range(len(e_lst)):
-	    # ->> convert to eigenvalues first <<- #
-            lamb=elc.shape_to_eigval(rho[i,j], ell[i,j], pro[i,j])
-	    _traj[j]=elc.get_elliptraj_one(p, a, lamb)
+        # ->> convert to eigenvalues first <<- #
+        lamb=elc.shape_to_eigval(rho[i], ell[i], pro[i])
+	print '{0}-th HEC traj: ic_rho={1}-{2}-{3}, lamb={4}'.format(i, rho[i], ell[i], pro[i], lamb)
+
+        _traj=elc.get_elliptraj_one(p, a, lamb)[:,:3]
+	ctraj=elc.lambda_comving(_traj[:,0], _traj[:,1], _traj[:,2], a)
+
+        # ->> only return 
+        delta=elc.clambda_to_rho(ctraj[0], ctraj[1], ctraj[2])
+        dd=np.rollaxis(np.concatenate((np.array(ctraj), np.array([delta])), axis=0), 1)
 
         traj.append(_traj)
 
 
-    # ->> gather <<- #
-    if mpi.size>1:
-        _trajall = np.array(mpi.world.gather(traj, root=0))
-    
-        if mpi.rank0:
-            trajall=np.concatenate((_trajall[0], _trajall[1]), axis=0)
-            for i in range(2, mpi.size):
-                trajall=np.concatenate((trajall, _trajall[i]), axis=0)
-        else:
-            trajall=None
-    
-        trajall=mpi.world.bcast(trajall, root=0)
-        return np.array(trajall)
-    else:
-        return np.array(traj)
+    return gather_mpi(traj)
 
 
 
@@ -181,7 +169,7 @@ def get_sc_trajs(p, dynvar, a, var_type):
 traj_type_list=['testing', 
                 'spherical_collapse',
 		'2D_ellipsoidal_collapse',
-		'ellipsoidal_collapse_e_p_list',
+		'ellipsoidal_collapse_single_ep',
                 ]
 
 def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict):
@@ -219,19 +207,26 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict
         raise Exception('EC NOT supported yet.')
 
 
-    if traj_type=='ellipsoidal_collapse_e_p_list':
+    if traj_type=='ellipsoidal_collapse_single_ep':
         # ->> get some extra information <<- #
         try:
             sig=pardict['sig'], 
-            el, pl = np.array(pardict['elist']), np.array(pardict['plist'])
+            _el, _pl = pardict['e'][0], pardict['p'][0]
+	    #ext_flag=pardict['ext_flag']
 	except:
 	    raise Exception()
 
 
-        rhol=np.linspace(-10., 1.68, 500)
-        traj=get_hec_trajs(p, rhol, el, pl, a, 'rho_e_p')
+        # ->>  generating rho-e-p grid data <<- #
+	# ->> e is actually e*nu=e*delta/sig <<- #
 
-        print 'final SC traj shape:', traj.shape
+        rhol=np.linspace(-10., 1.68, 500) # which is actually delta_rho #
+        el=_el/(rhol/sig)
+        pl=_pl*np.ones(rhol.shape)
+
+        traj=get_hec_trajs(p, rhol, el, pl, a, 'nu_e_p')
+
+        print 'final HEC traj shape:', traj.shape
 
 
     return traj

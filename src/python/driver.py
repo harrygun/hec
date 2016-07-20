@@ -62,19 +62,18 @@ if __name__=='__main__':
 
     #traj_type='testing'
     #traj_type='spherical_collapse'
-    traj_type='ellipsoidal_collapse_e_p_list'
+    traj_type='ellipsoidal_collapse_single_ep'
 
     # ->> some further info <<- #
     pardict={}
 
-    if traj_type=='ellipsoidal_collapse_e_p_list':
+    if traj_type=='ellipsoidal_collapse_single_ep':
         sig=np.sqrt(misc.sig2(p, 0., R=p.smooth_R, window_type=p.smooth_type) )
         #eg, pg = mar.meshgrid(p.e_list, p.p_list)
-	print 'doing ellipsoidal_collapse_e_p_list, sig=', sig, 'e/p=', p.e_list, p.p_list
+	print 'doing ellipsoidal_collapse_single_ep, sig=', sig, 'e/p=', p.e_list, p.p_list
 
-	pardict={'sig': sig, 'elist': p.e_list, 'plist': p.p_list, }
+	pardict={'sig': sig, 'e': p.e_list, 'p': p.p_list, }
 
-    quit()
 
     # ->> now run the trajectories generator <<- #
     traj=gtraj.generate_trajs(p, traj_type, a=a, **pardict)
