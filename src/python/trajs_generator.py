@@ -182,7 +182,7 @@ traj_type_list=['testing',
 		'2D_ellipsoidal_collapse',
                 ]
 
-def generate_trajs(p, traj_type, a='default', para_boundary='default'):
+def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict):
 
     if not traj_type in traj_type_list:
         raise Exception('traj_type NOT supported.')
@@ -215,6 +215,11 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default'):
     # ->> run ellipsoidal collapse parameter space <<- #
     if traj_type=='2D_ellipsoidal_collapse':
         raise Exception('EC NOT supported yet.')
+
+
+    if traj_type=='ellipsoidal_collapse_e_p_list':
+
+
 
 
     return traj

@@ -58,7 +58,13 @@ if __name__=='__main__':
     a=np.linspace(ai, af, na)
 
     #traj_type='testing'
-    traj_type='spherical_collapse'
+    #traj_type='spherical_collapse'
+    traj_type='ellipsoidal_collapse_e_p_list'
+
+    # ->> some further info <<- #
+    if traj_type=='ellipsoidal_collapse_e_p_list':
+        e, p = 
+
 
     traj=gtraj.generate_trajs(p, traj_type, a=a)
 
