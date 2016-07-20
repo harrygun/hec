@@ -54,7 +54,9 @@ def dynamic_elc(var, lna, p, other_args):
     if len(var)!=6: 
         raise Exception
 
-    li=np.array(other_args)
+    li=np.array(other_args[:3])
+    freeze=other_args[3:]
+
     a_i, da_i = list(var[:3]), list(var[3:])
 
     z=1./a-1.
@@ -76,7 +78,10 @@ def dynamic_elc(var, lna, p, other_args):
     ai_pp= [dyn_ai(i) for i in range(3)]
 
     for i in range(3):
-        if a_i[i]<=f_freeze*a:
+        if (a_i[i]<=f_freeze*a):
+            freeze[i]==True
+
+        if (freeze[i]==True):
             ai_p[i]=0.
             ai_pp[i]=0.
 
@@ -109,7 +114,8 @@ def get_elliptraj_one(p, a, lambda_i):
     #print 'IC:', varl_0
 
     # ->> arguments <<- #
-    other_args=list(lambda_i)
+    freeze=[False]*3
+    other_args=list(lambda_i)+freeze
     all_args=tuple([p]+other_args)
 
     #->> return the result from ODE solver <<- #
