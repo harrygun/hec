@@ -79,7 +79,7 @@ def dynamic_elc(var, lna, p, other_args):
 
     for i in range(3):
         if (a_i[i]<=f_freeze*a):
-            freeze[i]==True
+            freeze[i]=True
 
         if (freeze[i]==True):
             ai_p[i]=0.
