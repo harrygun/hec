@@ -122,7 +122,7 @@ def get_elliptraj_one(p, a, lambda_i):
     lna=np.log(a)
 
     #return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args)) #, mxstep=_mx_step_)
-    return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args), full_output=True,  mxstep=_mx_step_)
+    return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args), full_output=1,  mxstep=_mx_step_)
 
 
 
