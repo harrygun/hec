@@ -216,7 +216,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict
         # ->>  generating rho-e-p grid data <<- #
 	# ->> e is actually e*nu=e*delta/sig <<- #
 
-        rhol=np.linspace(-10., 1.68, 500) # which is actually delta_rho #
+        rhol=np.linspace(-10., 2., 500) # which is actually delta_rho #
         el=_el/(rhol/sig)
         pl=_pl*np.ones(rhol.shape)
 
