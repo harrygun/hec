@@ -17,7 +17,7 @@ import misc
 import ode_solver as myode
 
 
-_mx_step_=1000
+_mx_step_=5000
 
 # ->> freezing fraction <<- #
 f_freeze=0.18
@@ -121,7 +121,8 @@ def get_elliptraj_one(p, a, lambda_i):
     #->> return the result from ODE solver <<- #
     lna=np.log(a)
 
-    return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args)) #, mxstep=_mx_step_)
+    #return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args)) #, mxstep=_mx_step_)
+    return integ.odeint(dynamic_elc, varl_0, lna, args=(p, other_args), full_output=True,  mxstep=_mx_step_)
 
 
 

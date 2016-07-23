@@ -93,6 +93,8 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
     print 'rank: ', mpi.rank, idx
 
+    idx=[488]
+
 
     # ->> now run <<- #
     traj=[]
@@ -110,6 +112,8 @@ def get_hec_trajs(p, dynvar, a, var_type):
         dd=np.rollaxis(np.concatenate((np.array(ctraj), np.array([delta])), axis=0), 1)
 
         traj.append(dd)
+
+    quit()
 
 
     return gather_mpi(traj)
@@ -216,7 +220,7 @@ def generate_trajs(p, traj_type, a='default', para_boundary='default', **pardict
         # ->>  generating rho-e-p grid data <<- #
 	# ->> e is actually e*nu=e*delta/sig <<- #
 
-        rhol=np.linspace(-10., 2., 500) # which is actually delta_rho #
+        rhol=np.linspace(-10., 1.68, 500) # which is actually delta_rho #
         el=_el/(rhol/sig)
         pl=_pl*np.ones(rhol.shape)
 
