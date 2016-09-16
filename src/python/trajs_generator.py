@@ -105,10 +105,6 @@ def get_hec_trajs(p, dynvar, a, var_type):
 	print '{0}-th HEC traj: ic_rho={1}-{2}-{3}, lamb={4}'.format(i, rho[i], ell[i], pro[i], lamb)
 
         _traj=elc.get_elliptraj_one(p, a, lamb, freeze=False)[:,:3]
-        #_traj=elc.get_elliptraj_one(p, a, lamb, freeze=False)
-	print _traj.shape
-
-        quit()
 	ctraj=elc.lambda_comving(_traj[:,0], _traj[:,1], _traj[:,2], a)
 
         # ->> only return comoving lambda and delta <<- #
