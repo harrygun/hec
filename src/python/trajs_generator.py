@@ -113,8 +113,6 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
         traj.append(dd)
 
-    quit()
-
 
     return gather_mpi(traj)
 
