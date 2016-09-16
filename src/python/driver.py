@@ -81,6 +81,8 @@ if __name__=='__main__':
 
     ''' ->> now save data <<- '''
     if ((type(traj)==list)|(type(traj)==np.ndarray))&(mpi.rank0):
+        print 'Output data.'
+
 	fname_dat=root+'traj_'+traj_type+'.dat'
 	fname_dat_a=root+'traj_'+traj_type+'_a.dat'
 
