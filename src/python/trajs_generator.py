@@ -93,7 +93,7 @@ def get_hec_trajs(p, dynvar, a, var_type):
 
     print 'rank: ', mpi.rank, idx
 
-    idx=[488]
+    #idx=[488]
 
 
     # ->> now run <<- #
