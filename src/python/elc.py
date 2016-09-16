@@ -20,7 +20,7 @@ import ode_solver as myode
 _mx_step_=5000
 
 # ->> freezing fraction <<- #
-f_freeze=0.18
+f_freez_flag=0.18
 
 
 
@@ -55,7 +55,9 @@ def dynamic_elc(var, lna, p, other_args):
         raise Exception
 
     li=np.array(other_args[:3])
-    freeze=other_args[3:]
+    freeze=other_args[3]
+    freez_flag=other_args[4:]
+    
 
     a_i, da_i = list(var[:3]), list(var[3:])
 
@@ -77,13 +79,18 @@ def dynamic_elc(var, lna, p, other_args):
     ai_p = da_i
     ai_pp= [dyn_ai(i) for i in range(3)]
 
-    for i in range(3):
-        if (a_i[i]<=f_freeze*a):
-            freeze[i]=True
 
-        if (freeze[i]==True):
-            ai_p[i]=0.
-            ai_pp[i]=0.
+    if freeze:
+        # ->> if do freeze <<- #
+
+        for i in range(3):
+            if (a_i[i]<=f_freez_flag*a):
+                freez_flag[i]=True
+
+            if (freez_flag[i]==True):
+                ai_p[i]=0.
+                ai_pp[i]=0.
+
 
     return ai_p+ai_pp
 
@@ -92,7 +99,7 @@ def dynamic_elc(var, lna, p, other_args):
 
 
 
-def get_elliptraj_one(p, a, lambda_i):
+def get_elliptraj_one(p, a, lambda_i, **kwargs):
     # ->> ODE solver for ONE given initial condition <<- #
     # lambda_i: initial eigenvalues evaluated at z=0, so initial value = D(t_i) lambda_i
     # R:        initial Lagrangian size of the patch (NOT using)
@@ -114,8 +121,13 @@ def get_elliptraj_one(p, a, lambda_i):
     #print 'IC:', varl_0
 
     # ->> arguments <<- #
-    freeze=[False]*3
-    other_args=list(lambda_i)+freeze
+    try:
+        freeze=kwargs['freeze'] 
+    except:
+        raise Exception
+
+    freez_flag=[False]*3
+    other_args=list(lambda_i)+[freeze]+freez_flag
     all_args=tuple([p]+other_args)
 
     #->> return the result from ODE solver <<- #
@@ -183,7 +195,7 @@ def elltraj_test(p, a):
     l=shape_to_eigval(F, ee, pp)
     print 'testing lambda:', l
 
-    traj=get_elliptraj_one(p, a, l)
+    traj=get_elliptraj_one(p, a, l, freeze=False)
     #print 'traj:', traj
     print 'traj shape:', traj.shape
  
