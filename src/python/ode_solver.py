@@ -1,6 +1,7 @@
 import numpy as np
 import sympy as sp
-import sympy.mpmath as mt
+#import sympy.mpmath as mt
+import mpmath as mt
 import scipy.integrate as integ
 
 

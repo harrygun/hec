@@ -1,7 +1,8 @@
 import scipy as sp
 import numpy as np
 import pynbody as pn
-import sympy.mpmath as mpmath
+#import sympy.mpmath as mpmath
+import mpmath 
 import scipy.integrate as integ
 import pylab as pl
 
