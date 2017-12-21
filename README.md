@@ -1,2 +1,4 @@
-+# HEC
-  Homogeneous ellipsoidal collapse of dark matter halos
+HEC
+======================================================
+Homogeneous Ellipsoidal Collapse of dark matter halos
+======================================================
